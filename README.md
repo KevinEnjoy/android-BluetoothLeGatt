@@ -38,6 +38,41 @@ Getting Started
 This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
+修改内容
+---------------
+1. ListView的样式
+2. 显示收数据的时间戳
+3. 对于`写服务`，点击特征值，会写入值： `android ping ble.`
+4. 在小米手机发生的启动失败问题（其他手机和模拟器都没问题），加上全路径等都无法解决。应该是项目环境的问题，代码是没问题的。错误信息如下：
+```
+java.lang.RuntimeException: Unable to instantiate activity ComponentInfo{com.example.android.bluetoothlegatt/com.example.android.bluetoothlegatt.DeviceScanActivity}: java.lang.ClassNotFoundException: Didn't find class "com.example.android.bluetoothlegatt.DeviceScanActivity" on path: DexPathList[[zip file "/data/app/com.example.android.bluetoothlegatt-2/base.apk"],nativeLibraryDirectories=[/data/app/com.example.android.bluetoothlegatt-2/lib/arm64, /vendor/lib64, /system/lib64]]
+	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2334)
+	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2483)
+	at android.app.ActivityThread.access$900(ActivityThread.java:153)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1349)
+	at android.os.Handler.dispatchMessage(Handler.java:102)
+	at android.os.Looper.loop(Looper.java:148)
+	at android.app.ActivityThread.main(ActivityThread.java:5441)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:738)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:628)
+Caused by: java.lang.ClassNotFoundException: Didn't find class "com.example.android.bluetoothlegatt.DeviceScanActivity" on path: DexPathList[[zip file "/data/app/com.example.android.bluetoothlegatt-2/base.apk"],nativeLibraryDirectories=[/data/app/com.example.android.bluetoothlegatt-2/lib/arm64, /vendor/lib64, /system/lib64]]
+	at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:56)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:511)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:469)
+	at android.app.Instrumentation.newActivity(Instrumentation.java:1068)
+	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2324)
+	... 9 more
+	Suppressed: java.lang.ClassNotFoundException: com.example.android.bluetoothlegatt.DeviceScanActivity
+		at java.lang.Class.classForName(Native Method)
+		at java.lang.BootClassLoader.findClass(ClassLoader.java:781)
+		at java.lang.BootClassLoader.loadClass(ClassLoader.java:841)
+		at java.lang.ClassLoader.loadClass(ClassLoader.java:504)
+		... 12 more
+	Caused by: java.lang.NoClassDefFoundError: Class not found using the boot class loader; no stack trace available
+
+```
+
 Support
 -------
 

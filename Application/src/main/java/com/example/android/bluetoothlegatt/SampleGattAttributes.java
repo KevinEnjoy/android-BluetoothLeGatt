@@ -28,6 +28,15 @@ public class SampleGattAttributes {
 
     static {
         // Sample Services.
+
+        //这里是配置UUID在APP界面显示的别名，方便用户识别UUID
+        attributes.put("0000ffe5-0000-1000-8000-00805f9b34fb", "Tx 写数据通道");
+        attributes.put("0000ffe9-0000-1000-8000-00805f9b34fb", "Tx write");
+
+        attributes.put("0000ffe0-0000-1000-8000-00805f9b34fb", "Rx 通知通道");
+        attributes.put("0000ffe4-0000-1000-8000-00805f9b34fb", "Rx notify");
+
+
         attributes.put("0000180d-0000-1000-8000-00805f9b34fb", "Heart Rate Service");
         attributes.put("0000180a-0000-1000-8000-00805f9b34fb", "Device Information Service");
         // Sample Characteristics.

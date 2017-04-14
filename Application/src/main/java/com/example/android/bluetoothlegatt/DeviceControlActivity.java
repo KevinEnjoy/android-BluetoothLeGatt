@@ -35,7 +35,9 @@ import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,6 +55,7 @@ public class DeviceControlActivity extends Activity {
 
     private TextView mConnectionState;
     private TextView mDataField;
+    private TextView data_timestamp;
     private String mDeviceName;
     private String mDeviceAddress;
     private ExpandableListView mGattServicesList;
@@ -126,9 +129,11 @@ public class DeviceControlActivity extends Activity {
                         final BluetoothGattCharacteristic characteristic =
                                 mGattCharacteristics.get(groupPosition).get(childPosition);
                         final int charaProp = characteristic.getProperties();
+                        Log.i(TAG, "onChildClick: charaProp="+charaProp);
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
                             // If there is an active notification on a characteristic, clear
                             // it first so it doesn't update the data field on the user interface.
+                            Log.i(TAG, "charaProp PROPERTY_READ" );
                             if (mNotifyCharacteristic != null) {
                                 mBluetoothLeService.setCharacteristicNotification(
                                         mNotifyCharacteristic, false);
@@ -140,16 +145,27 @@ public class DeviceControlActivity extends Activity {
                             mNotifyCharacteristic = characteristic;
                             mBluetoothLeService.setCharacteristicNotification(
                                     characteristic, true);
+                            Log.i(TAG, "charaProp PROPERTY_NOTIFY" );
+                        }
+                        //某BLE模块的写 charaProp 为 12
+                        if (charaProp == BluetoothGattCharacteristic.PROPERTY_WRITE ||
+                                charaProp == BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE ||
+                                charaProp == 12) {
+                            Log.i(TAG, "charaProp PROPERTY_WRITE" );
+                            //随便写一个字符串
+                            characteristic.setValue("android ping ble.\n".getBytes());
+                            mBluetoothLeService.writeCharacteristic(characteristic);
                         }
                         return true;
                     }
                     return false;
                 }
-    };
+            };
 
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
         mDataField.setText(R.string.no_data);
+        data_timestamp.setText(R.string.no_data);
     }
 
     @Override
@@ -167,6 +183,7 @@ public class DeviceControlActivity extends Activity {
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
+        data_timestamp = (TextView) findViewById(R.id.data_timestamp);
 
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -237,6 +254,9 @@ public class DeviceControlActivity extends Activity {
 
     private void displayData(String data) {
         if (data != null) {
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");//设置日期格式
+            String timestamp = df.format(new Date());
+            data_timestamp.setText(timestamp);
             mDataField.setText(data);
         }
     }
@@ -258,6 +278,7 @@ public class DeviceControlActivity extends Activity {
         for (BluetoothGattService gattService : gattServices) {
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
             uuid = gattService.getUuid().toString();
+            Log.e(TAG, "gattService  uuid="+uuid );
             currentServiceData.put(
                     LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
             currentServiceData.put(LIST_UUID, uuid);
@@ -275,6 +296,7 @@ public class DeviceControlActivity extends Activity {
                 charas.add(gattCharacteristic);
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
                 uuid = gattCharacteristic.getUuid().toString();
+                Log.e(TAG, "gattCharacteristic  uuid="+uuid );
                 currentCharaData.put(
                         LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
                 currentCharaData.put(LIST_UUID, uuid);
@@ -287,11 +309,11 @@ public class DeviceControlActivity extends Activity {
         SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
                 this,
                 gattServiceData,
-                android.R.layout.simple_expandable_list_item_2,
+                R.layout.service_item,
                 new String[] {LIST_NAME, LIST_UUID},
                 new int[] { android.R.id.text1, android.R.id.text2 },
                 gattCharacteristicData,
-                android.R.layout.simple_expandable_list_item_2,
+                R.layout.service_item,
                 new String[] {LIST_NAME, LIST_UUID},
                 new int[] { android.R.id.text1, android.R.id.text2 }
         );

@@ -305,6 +305,16 @@ public class BluetoothLeService extends Service {
         }
     }
 
+
+    /**
+     * 自己加的写方法
+     * @param characteristic
+     * @return
+     */
+    public boolean writeCharacteristic(BluetoothGattCharacteristic characteristic){
+        return mBluetoothGatt.writeCharacteristic(characteristic);
+    }
+
     /**
      * Retrieves a list of supported GATT services on the connected device. This should be
      * invoked only after {@code BluetoothGatt#discoverServices()} completes successfully.
